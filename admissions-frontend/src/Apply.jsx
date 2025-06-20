@@ -18,12 +18,13 @@ export default function Apply() {
     englishTest: '',
     other: '',
     testScore: '',
-    gpa: ''
+    gpa: '',
+    signed: ''
   });
 
-  const [transcriptFile, setTranscriptFile] = useState(null);
-  const [idFile, setIdFile] = useState(null);
-  const [testResultFile, setTestResultFile] = useState(null);
+  const [transcriptFileName, setTranscriptFile] = useState(null);
+  const [idFileName, setIdFile] = useState(null);
+  const [testResultFileName, setTestResultFile] = useState(null);
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -44,9 +45,9 @@ export default function Apply() {
       formData.append(key, value);
     });
 
-    if (transcriptFile) formData.append('transcriptFile', transcriptFile);
-    if (idFile) formData.append('idFile', idFile);
-    if (testResultFile) formData.append('testResultFile', testResultFile);
+    if (transcriptFileName) formData.append('transcriptFileName', transcriptFileName);
+    if (idFileName) formData.append('idFileName', idFileName);
+    if (testResultFileName) formData.append('testResultFileName', testResultFileName);
 
     const res = await fetch('https://globalacademy.onrender.com/apply', {
       method: 'POST',
@@ -325,9 +326,9 @@ export default function Apply() {
         </div>
       </div>
 
-      {fileUploader("High School/College Transcript", transcriptFile, setTranscriptFile, transcriptInputRef)}
-      {fileUploader("Passport Bio Page OR ID Card", idFile, setIdFile, idInputRef)}
-      {fileUploader("English Proficiency Test Result", testResultFile, setTestResultFile, testResultInputRef)}
+      {fileUploader("High School/College Transcript", transcriptFileName, setTranscriptFile, transcriptInputRef)}
+      {fileUploader("Passport Bio Page OR ID Card", idFileName, setIdFile, idInputRef)}
+      {fileUploader("English Proficiency Test Result", testResultFileName, setTestResultFile, testResultInputRef)}
       
       <div className="pt-6">
         <div className="flex items-center space-x-4 pb-2">
