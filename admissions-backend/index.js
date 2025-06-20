@@ -26,7 +26,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/apply', upload.single('idFile'), async (req, res) => {
+app.post('/apply', upload.fields([
+    { name: 'transcriptFile', maxCount: 1 },
+    { name: 'idFile', maxCount: 1 },
+    { name: 'testResultFile', maxCount: 1 }
+  ]), async (req, res) => {
   const { name, email, gpa } = req.body;
   const idFile = req.file;
 
