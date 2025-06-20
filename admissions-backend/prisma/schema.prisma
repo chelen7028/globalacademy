@@ -8,12 +8,29 @@ generator client {
 }
 
 model Application {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String
-  gpa         Float
-  idFileName  String?
-  status      String   @default("pending") // 'pending', 'approved', 'rejected'
-  submittedAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  givenName     String
+  familyName    String
+  nationality   String
+  gender        String
+  dob           DateTime
+  phone         String
+  streetAddress String
+  country       String
+  stateProvince String
+  city          String
+  postalCode    Float?
+  academicTerm  String
+  academicYear  Float
+  englishTest   String
+  other         String?
+  testScore     Float
+  gpa           Float
+  transcriptFileName    String?
+  idFileName            String?
+  testResultFileName    String?
+  signed        String
+  status        String   @default("pending") // 'pending', 'approved', 'rejected'
+  submittedAt   DateTime @default(now())
 }
 
