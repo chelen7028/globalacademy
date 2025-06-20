@@ -6,7 +6,9 @@ const { PrismaClient } = require('@prisma/client');
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(cors()); // Allow frontend requests from Vite
+app.use(cors({
+  origin: 'https://chelen7028.github.io'
+})); // Allow frontend requests from Vite
 app.use(express.json()); // Support JSON bodies
 app.use('/uploads', express.static('uploads'));
 
