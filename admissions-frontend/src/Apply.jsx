@@ -97,7 +97,6 @@ export default function Apply() {
   );
 
   
-
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto px-4 space-y-4 pt-10" encType="multipart/form-data">
       <img 

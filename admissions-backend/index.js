@@ -38,13 +38,32 @@ app.post('/apply', upload.fields([
   console.log('File:', req.file);
 
   try {
+    const dob = new Date(req.body.dob);  // Convert string to Date object
+
     const newApp = await prisma.application.create({
       data: {
-        name,
-        email,
-        gpa: parseFloat(gpa),
-        idFileName: idFile?.filename || null,
-      },
+        givenName: req.body.givenName,
+        familyName: req.body.familyName,
+        nationality: req.body.nationality,
+        gender: req.body.gender,
+        dob: dob,
+        phone: req.body.phone,
+        streetAddress: req.body.streetAddress,
+        country: req.body.country,
+        stateProvince: req.body.stateProvince,
+        city: req.body.city,
+        postalCode: req.body.postalCode, // if String change in schema accordingly
+        academicTerm: req.body.academicTerm,
+        academicYear: Number(req.body.academicYear), // or parseInt if Int in schema
+        englishTest: req.body.englishTest,
+        other: req.body.other,
+        testScore: Number(req.body.testScore),
+        gpa: Number(req.body.gpa),
+        transcriptFileName: transcriptFileName, // from multer saved file
+        idFileName: idFileName,
+        testResultFileName: testResultFileName,
+        signed: req.body.signed,
+      }
     });
     res.json(newApp);
   } catch (error) {

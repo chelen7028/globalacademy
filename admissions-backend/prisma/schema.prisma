@@ -13,18 +13,18 @@ model Application {
   familyName    String
   nationality   String
   gender        String
-  dob           DateTime
+  dob           Date
   phone         String
   streetAddress String
   country       String
   stateProvince String
   city          String
-  postalCode    Float?
+  postalCode    String?
   academicTerm  String
-  academicYear  Float
+  academicYear  Int
   englishTest   String
   other         String?
-  testScore     Float
+  testScore     Int
   gpa           Float
   transcriptFileName    String?
   idFileName            String?
