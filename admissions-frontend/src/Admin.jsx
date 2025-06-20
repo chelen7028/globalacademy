@@ -5,7 +5,7 @@ export default function Admin() {
   const [statusFilter, setStatusFilter] = useState('');
 
   const fetchApps = async (status = '') => {
-    const res = await fetch(`http://localhost:4000/applications${status ? `?status=${status}` : ''}`);
+    const res = await fetch(`https://globalacademy.onrender.com/applications${status ? `?status=${status}` : ''}`);
     const data = await res.json();
     setApplications(data);
   };
@@ -15,7 +15,7 @@ export default function Admin() {
   }, [statusFilter]);
 
   const updateStatus = async (id, newStatus) => {
-    await fetch(`http://localhost:4000/applications/${id}`, {
+    await fetch(`https://globalacademy.onrender.com/applications/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus }),
@@ -28,7 +28,7 @@ export default function Admin() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4000/applications/${id}`, {
+      const res = await fetch(`https://globalacademy.onrender.com/applications/${id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -85,7 +85,7 @@ export default function Admin() {
               <td className="border p-2">
                 {app.idFileName ? (
                   <a
-                    href={`http://localhost:4000/uploads/${app.idFileName}`}
+                    href={`https://globalacademy.onrender.com/uploads/${app.idFileName}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 underline"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Apply from './Apply';
 import Admin from './Admin';
 import ThankYou from './ThankYou';
@@ -17,4 +17,3 @@ function App() {
 }
 
 export default App;
-
