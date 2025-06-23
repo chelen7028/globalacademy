@@ -13,7 +13,7 @@ model Application {
   familyName    String
   nationality   String
   gender        String
-  dob           Date
+  dob           DateTime
   phone         String
   streetAddress String
   country       String
@@ -30,6 +30,7 @@ model Application {
   idFileName            String?
   testResultFileName    String?
   signed        String
+  name          String?
   status        String   @default("pending") // 'pending', 'approved', 'rejected'
   submittedAt   DateTime @default(now())
 }
