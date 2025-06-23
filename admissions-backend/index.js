@@ -47,7 +47,7 @@ app.use(cors({
 })); // Allow frontend requests from Vite
 app.use(express.json()); // Support JSON bodies
 app.use('/uploads', express.static('uploads'));
-app.use('/applications', authenticateAdmin, );
+// app.use('/applications', authenticateAdmin, router);
 
 const path = require('path');
 
@@ -71,7 +71,7 @@ const upload = multer({ storage }).fields([
 app.post('/apply', upload, async (req, res) => {
   const body = req.body;
   const files = req.files;
-  
+
   const applicationData = {
     givenName: body.givenName,
     familyName: body.familyName,
