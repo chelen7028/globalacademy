@@ -21,6 +21,7 @@ export default function Apply() {
     gpa: '',
     signed: ''
   });
+  
 
   const [transcriptFileName, setTranscriptFile] = useState(null);
   const [idFileName, setIdFile] = useState(null);

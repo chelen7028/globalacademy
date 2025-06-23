@@ -35,6 +35,8 @@ app.post('/apply', upload, async (req, res) => {
   const body = req.body;
   const files = req.files;
 
+  console.log("POST");
+
   const applicationData = {
     givenName: body.givenName,
     familyName: body.familyName,
