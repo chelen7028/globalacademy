@@ -63,7 +63,7 @@ app.post('/apply', upload, async (req, res) => {
   };
 
   try {
-    const newApp = await prisma.application.create({ data: applicationData, name: 'new app'});
+    const newApp = await prisma.application.create({ data: applicationData});
     res.json(newApp);
   } catch (err) {
     console.error("❌ Failed to save application:", err);
