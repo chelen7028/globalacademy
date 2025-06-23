@@ -26,48 +26,41 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/apply', upload.fields([
-    { name: 'transcriptFile', maxCount: 1 },
-    { name: 'idFile', maxCount: 1 },
-    { name: 'testResultFile', maxCount: 1 }
-  ]), async (req, res) => {
-  const { name, email, gpa } = req.body;
-  const idFile = req.file;
+app.post('/apply', upload, async (req, res) => {
+  console.log("POST");
+  console.log(req.files);
+  const body = req.body;
+  const files = req.files;
 
-  console.log('Body:', req.body);
-  console.log('File:', req.file);
+  const applicationData = {
+    givenName: body.givenName,
+    familyName: body.familyName,
+    nationality: body.nationality,
+    gender: body.gender,
+    dob: new Date(body.dob),
+    phone: body.phone,
+    streetAddress: body.streetAddress,
+    country: body.country,
+    stateProvince: body.stateProvince,
+    city: body.city,
+    postalCode: parseFloat(body.postalCode) || null,
+    academicTerm: body.academicTerm,
+    academicYear: parseFloat(body.academicYear),
+    englishTest: body.englishTest,
+    other: body.other || null,
+    testScore: parseFloat(body.testScore),
+    gpa: parseFloat(body.gpa),
+    transcriptFileName: files.transcriptFileName?.[0]?.filename || null,
+    idFileName: files.idFileName?.[0]?.filename || null,
+    testResultFileName: files.testResultFileName?.[0]?.filename || null,
+    signed: body.signed
+  };
 
   try {
-    const dob = new Date(req.body.dob);  // Convert string to Date object
-
-    const newApp = await prisma.application.create({
-      data: {
-        givenName: req.body.givenName,
-        familyName: req.body.familyName,
-        nationality: req.body.nationality,
-        gender: req.body.gender,
-        dob: dob,
-        phone: req.body.phone,
-        streetAddress: req.body.streetAddress,
-        country: req.body.country,
-        stateProvince: req.body.stateProvince,
-        city: req.body.city,
-        postalCode: req.body.postalCode, // if String change in schema accordingly
-        academicTerm: req.body.academicTerm,
-        academicYear: Number(req.body.academicYear), // or parseInt if Int in schema
-        englishTest: req.body.englishTest,
-        other: req.body.other,
-        testScore: Number(req.body.testScore),
-        gpa: Number(req.body.gpa),
-        transcriptFileName: transcriptFileName, // from multer saved file
-        idFileName: idFileName,
-        testResultFileName: testResultFileName,
-        signed: req.body.signed,
-      }
-    });
+    const newApp = await prisma.application.create({ data: applicationData });
     res.json(newApp);
-  } catch (error) {
-    console.error('❌ Failed to save application:', error);
+  } catch (err) {
+    console.error("❌ Failed to save application:", err);
     res.status(500).json({ error: 'Server error' });
   }
 });
