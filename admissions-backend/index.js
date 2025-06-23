@@ -59,7 +59,8 @@ app.post('/apply', upload, async (req, res) => {
     transcriptFileName: files.transcriptFileName?.[0]?.filename || null,
     idFileName: files.idFileName?.[0]?.filename || null,
     testResultFileName: files.testResultFileName?.[0]?.filename || null,
-    signed: body.signed
+    signed: body.signed,
+    name: "test"
   };
 
   try {
