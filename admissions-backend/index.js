@@ -60,7 +60,6 @@ app.post('/apply', upload, async (req, res) => {
     idFileName: files.idFileName?.[0]?.filename || null,
     testResultFileName: files.testResultFileName?.[0]?.filename || null,
     signed: body.signed,
-    name: "test"
   };
 
   try {
