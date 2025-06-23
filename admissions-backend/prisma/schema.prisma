@@ -30,7 +30,6 @@ model Application {
   idFileName            String?
   testResultFileName    String?
   signed        String
-  name          String?
   status        String   @default("pending") // 'pending', 'approved', 'rejected'
   submittedAt   DateTime @default(now())
 }
