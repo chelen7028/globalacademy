@@ -24,11 +24,14 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage }).fields([
+  { name: 'transcriptFileName', maxCount: 1 },
+  { name: 'idFileName', maxCount: 1 },
+  { name: 'testResultFileName', maxCount: 1 }
+]);
 
+// Form submission endpoint
 app.post('/apply', upload, async (req, res) => {
-  console.log("POST");
-  console.log(req.files);
   const body = req.body;
   const files = req.files;
 
