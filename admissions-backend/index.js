@@ -71,10 +71,7 @@ const upload = multer({ storage }).fields([
 app.post('/apply', upload, async (req, res) => {
   const body = req.body;
   const files = req.files;
-  console.log(body);
-
-  console.log("POST 1");
-
+  
   const applicationData = {
     givenName: body.givenName,
     familyName: body.familyName,
