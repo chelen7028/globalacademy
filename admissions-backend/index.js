@@ -1,103 +1,63 @@
+require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const path = require('path');
+const fs = require('fs');
+
+const { router: authRouter, authenticateAdmin } = require('./auth');
 
 const app = express();
 const prisma = new PrismaClient();
 
-// const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcrypt');
-
-// const router = express.Router();
-// const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
-
-// // Admin login
-// router.post('/admin/login', async (req, res) => {
-//   const { email, password } = req.body;
-//   const admin = await prisma.adminUser.findUnique({ where: { email } });
-//   if (!admin) return res.status(401).json({ error: 'Invalid credentials' });
-
-//   const isMatch = await bcrypt.compare(password, admin.password);
-//   if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
-
-//   const token = jwt.sign({ adminId: admin.id }, JWT_SECRET, { expiresIn: '1h' });
-//   res.json({ token });
-// });
-
-// // Middleware to protect admin routes
-// function authenticateAdmin(req, res, next) {
-//   const authHeader = req.headers.authorization;
-//   if (!authHeader) return res.status(401).json({ error: 'Missing token' });
-
-//   const token = authHeader.split(' ')[1];
-//   try {
-//     const decoded = jwt.verify(token, JWT_SECRET);
-//     req.adminId = decoded.adminId;
-//     next();
-//   } catch (err) {
-//     return res.status(403).json({ error: 'Invalid token' });
-//   }
-// }
-
-// module.exports = { router, authenticateAdmin, router};
-
-app.use(cors({
-  origin: 'https://chelen7028.github.io'
-})); // Allow frontend requests from Vite
-app.use(express.json()); // Support JSON bodies
+// Middlewares
+app.use(cors({ origin: 'https://chelen7028.github.io' }));
+app.use(express.json());
 app.use('/uploads', express.static('uploads'));
-// app.use('/applications', authenticateAdmin, router);
+app.use(authRouter); // Mount login route
 
-const path = require('path');
-
+// File Uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'uploads'));
-  },
-  filename: function (req, file, cb) {
-    // For example, save with original name or with a prefix like timestamp
-    cb(null, Date.now() + '_' + file.originalname);
-  }
+  destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads')),
+  filename: (req, file, cb) => cb(null, Date.now() + '_' + file.originalname)
 });
-
 const upload = multer({ storage }).fields([
   { name: 'transcriptFileName', maxCount: 1 },
   { name: 'idFileName', maxCount: 1 },
   { name: 'testResultFileName', maxCount: 1 }
 ]);
 
-// Form submission endpoint
+// Routes
 app.post('/apply', upload, async (req, res) => {
-  const body = req.body;
-  const files = req.files;
-
-  const applicationData = {
-    givenName: body.givenName,
-    familyName: body.familyName,
-    nationality: body.nationality,
-    gender: body.gender,
-    dob: new Date(body.dob),
-    phone: body.phone,
-    streetAddress: body.streetAddress,
-    country: body.country,
-    stateProvince: body.stateProvince,
-    city: body.city,
-    postalCode: body.postalCode || null,
-    academicTerm: body.academicTerm,
-    academicYear: parseFloat(body.academicYear),
-    englishTest: body.englishTest,
-    other: body.other || null,
-    testScore: parseFloat(body.testScore),
-    gpa: parseFloat(body.gpa),
-    transcriptFileName: files.transcriptFileName?.[0]?.filename || null,
-    idFileName: files.idFileName?.[0]?.filename || null,
-    testResultFileName: files.testResultFileName?.[0]?.filename || null,
-    signed: body.signed,
-  };
-
   try {
-    const newApp = await prisma.application.create({ data: applicationData});
+    const { body, files } = req;
+    const newApp = await prisma.application.create({
+      data: {
+        program: 'Global Academy',
+        givenName: body.givenName,
+        familyName: body.familyName,
+        nationality: body.nationality,
+        gender: body.gender,
+        dob: new Date(body.dob),
+        phone: body.phone,
+        streetAddress: body.streetAddress,
+        country: body.country,
+        stateProvince: body.stateProvince,
+        city: body.city,
+        postalCode: body.postalCode || null,
+        academicTerm: body.academicTerm,
+        academicYear: parseFloat(body.academicYear),
+        englishTest: body.englishTest,
+        other: body.other || null,
+        testScore: parseFloat(body.testScore),
+        gpa: parseFloat(body.gpa),
+        signed: body.signed,
+        transcriptFileName: files.transcriptFileName?.[0]?.filename || null,
+        idFileName: files.idFileName?.[0]?.filename || null,
+        testResultFileName: files.testResultFileName?.[0]?.filename || null,
+      }
+    });
     res.json(newApp);
   } catch (err) {
     console.error("❌ Failed to save application:", err);
@@ -105,28 +65,18 @@ app.post('/apply', upload, async (req, res) => {
   }
 });
 
-app.listen(4000, () => {
-  console.log('Backend running on http://localhost:4000');
-});
-
-// GET /applications?status=approved
-app.get('/applications', async (req, res) => {
+app.get('/applications', authenticateAdmin, async (req, res) => {
   const { status } = req.query;
-  const where = status ? { status } : {};
-
   const apps = await prisma.application.findMany({
-    where,
+    where: status ? { status } : {},
     orderBy: { submittedAt: 'desc' }
   });
-
   res.json(apps);
 });
 
-// PATCH /applications/:id
-app.patch('/applications/:id', async (req, res) => {
+app.patch('/applications/:id', authenticateAdmin, async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-
   try {
     const updated = await prisma.application.update({
       where: { id: parseInt(id) },
@@ -138,36 +88,24 @@ app.patch('/applications/:id', async (req, res) => {
   }
 });
 
-const fs = require('fs');
-
-// Delete application by ID
-app.delete('/applications/:id', async (req, res) => {
+app.delete('/applications/:id', authenticateAdmin, async (req, res) => {
   const id = parseInt(req.params.id);
-
   try {
-    // Find the application to get the filename
-    const application = await prisma.application.findUnique({ where: { id } });
-    if (!application) {
-      return res.status(404).json({ error: 'Application not found' });
-    }
+    const app = await prisma.application.findUnique({ where: { id } });
+    if (!app) return res.status(404).json({ error: 'Not found' });
 
-    // Delete file from uploads folder if exists
-    if (application.idFileName) {
-      const filePath = path.join(__dirname, 'uploads', application.idFileName);
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.error('Failed to delete file:', err);
-        }
-      });
-    }
+    ['idFileName', 'transcriptFileName', 'testResultFileName'].forEach(field => {
+      if (app[field]) {
+        const filePath = path.join(__dirname, 'uploads', app[field]);
+        fs.unlink(filePath, () => {});
+      }
+    });
 
-    // Delete the database record
     await prisma.application.delete({ where: { id } });
-
-    res.json({ message: 'Application deleted' });
-  } catch (error) {
-    console.error(error);
+    res.json({ message: 'Deleted' });
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
+app.listen(4000, () => console.log('Server running on http://localhost:4000'));

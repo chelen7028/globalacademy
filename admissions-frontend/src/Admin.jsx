@@ -5,43 +5,39 @@ export default function Admin() {
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    // Redirect if not logged in
+    if (!token) {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    fetchApps(statusFilter); // fetch only if logged in
+  }, [statusFilter]);
+
   const fetchApps = async (status = '') => {
-    const res = await fetch(`https://globalacademy.onrender.com/applications${status ? `?status=${status}` : ''}`);
+    const res = await fetch(`https://globalacademy.onrender.com/applications${status ? `?status=${status}` : ''}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
     const data = await res.json();
     setApplications(data);
   };
 
-  useEffect(() => {
-    fetchApps(statusFilter);
-  }, [statusFilter]);
-
   const updateStatus = async (id, newStatus) => {
     await fetch(`https://globalacademy.onrender.com/applications/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
       body: JSON.stringify({ status: newStatus }),
     });
     fetchApps(statusFilter);
   };
-
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm('Are you sure you want to delete this application?')) return;
-
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch(`https://globalacademy.onrender.com/applications/${id}`, {
-  //       method: 'DELETE',
-  //     });
-  //     if (res.ok) {
-  //       fetchApps(statusFilter);
-  //     } else {
-  //       alert('Failed to delete application');
-  //     }
-  //   } catch {
-  //     alert('Error deleting application');
-  //   }
-  //   setLoading(false);
-  // };
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -65,6 +61,7 @@ export default function Admin() {
         <thead>
           <tr className="bg-gray-100 text-left">
             <th className="border p-2">ID</th>
+            <th className="border p-2">Program</th>
             <th className="border p-2">Name</th>
             <th className="border p-2">Gender</th>
             <th className="border p-2">DOB</th>
@@ -88,6 +85,7 @@ export default function Admin() {
           {applications.map(app => (
             <tr key={app.id} className="hover:bg-gray-50">
               <td className="border p-2">{app.id}</td>
+              <td className="border p-2">{app.program}</td>
               <td className="border p-2">{app.givenName} {app.familyName}</td>
               <td className="border p-2">{app.gender}</td>
               <td className="border p-2">{new Date(app.dob).toLocaleDateString()}</td>
@@ -131,12 +129,6 @@ export default function Admin() {
                 >
                   Reject
                 </button>
-                {/* <button
-                  onClick={() => handleDelete(app.id)}
-                  className="bg-gray-500 text-white px-2 py-1 rounded w-full"
-                >
-                  Delete
-                </button> */}
               </td>
             </tr>
           ))}

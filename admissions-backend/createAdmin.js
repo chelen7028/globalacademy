@@ -1,19 +1,19 @@
-// createAdmin.js
-
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-module.exports = prisma;
-
 const bcrypt = require('bcrypt');
 
+const prisma = new PrismaClient();
+
 async function createAdmin() {
-  const hashedPassword = await bcrypt.hash('yourPasswordHere', 10);
+  const email = 'admin@example.com';
+  const password = 'supersecurepassword';
+  const hashed = await bcrypt.hash(password, 10);
+
   await prisma.adminUser.create({
-    data: {
-      email: 'chelen@mit.edu',
-      password: hashedPassword
-    }
+    data: { email, password: hashed }
   });
-  console.log('Admin created');
+
+  console.log('✅ Admin user created');
+  process.exit();
 }
-createAdmin();
+
+createAdmin().catch(console.error);
