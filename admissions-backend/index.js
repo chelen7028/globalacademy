@@ -29,6 +29,16 @@ const upload = multer({ storage }).fields([
 ]);
 
 // Routes
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const admin = await prisma.admin.findUnique({ where: { email } });
+  if (!admin || !(await bcrypt.compare(password, admin.password)))
+    return res.status(401).json({ error: 'Invalid credentials' });
+  
+  const token = jwt.sign({ adminId: admin.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.json({ token });
+});
+
 app.post('/apply', upload, async (req, res) => {
   try {
     const { body, files } = req;

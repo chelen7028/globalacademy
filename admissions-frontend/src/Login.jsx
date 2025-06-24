@@ -8,7 +8,7 @@ export default function Login() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      window.location.href = '/admin.html';
+      window.location.href = '/admin';
     }
   }, []);
 
@@ -30,7 +30,7 @@ export default function Login() {
       if (res.ok) {
         const { token } = await res.json();
         localStorage.setItem('token', token);
-        window.location.href = '/admin.html';
+        window.location.href = '/admin';
       } else {
         const err = await res.json();
         setError(err.error || 'Login failed');

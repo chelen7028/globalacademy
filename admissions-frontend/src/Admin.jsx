@@ -10,7 +10,7 @@ export default function Admin() {
 
     // Redirect if not logged in
     if (!token) {
-      window.location.href = '/login.html';
+      window.location.href = '/login';
       return;
     }
 
