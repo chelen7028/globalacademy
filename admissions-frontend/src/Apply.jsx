@@ -206,7 +206,7 @@ export default function Apply() {
         { name: 'country', label: 'Country' },
         { name: 'stateProvince', label: 'State/Province' },
         { name: 'city', label: 'City' },
-        { name: 'postalCode', label: 'Postal Code', type: 'number' },
+        { name: 'postalCode', label: 'Postal Code'},
       ].map(({ name, label, type = 'text', ...rest }) => {
         const isRequired = name !== 'postalCode' && name !== 'other';
         return (

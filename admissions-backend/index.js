@@ -83,7 +83,7 @@ app.post('/apply', upload, async (req, res) => {
     country: body.country,
     stateProvince: body.stateProvince,
     city: body.city,
-    postalCode: parseFloat(body.postalCode) || null,
+    postalCode: body.postalCode || null,
     academicTerm: body.academicTerm,
     academicYear: parseFloat(body.academicYear),
     englishTest: body.englishTest,
